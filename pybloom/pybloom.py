@@ -45,11 +45,12 @@ except ImportError:
     raise ImportError('pybloom requires bitarray >= 0.3.4')
 
 __version__ = '2.0'
-__author__  = "Jay Baird <jay.baird@me.com>, Bob Ippolito <bob@redivi.com>,\
+__author__ = "Jay Baird <jay.baird@me.com>, Bob Ippolito <bob@redivi.com>,\
                Marius Eriksen <marius@monkey.org>,\
                Alex Brasetvik <alex@brasetvik.com>,\
                Matt Bachmann <bachmann.matt@gmail.com>,\
               "
+
 
 def make_hashfuncs(num_slices, num_bits):
     if num_bits >= (1 << 31):
@@ -74,6 +75,7 @@ def make_hashfuncs(num_slices, num_bits):
     if extra:
         num_salts += 1
     salts = tuple(hashfn(hashfn(pack('I', i)).digest()) for i in range_fn(num_salts))
+
     def _make_hashfuncs(key):
         if running_python_3:
             if isinstance(key, str):
@@ -131,9 +133,12 @@ class BloomFilter(object):
         # n ~= (k * m) * ((ln(2) ** 2) / abs(ln(P)))
         # m ~= n * abs(ln(P)) / (k * (ln(2) ** 2))
         num_slices = int(math.ceil(math.log(1.0 / error_rate, 2)))
-        bits_per_slice = int(math.ceil(
-            (capacity * abs(math.log(error_rate))) /
-            (num_slices * (math.log(2) ** 2))))
+        bits_per_slice = int(
+            math.ceil(
+                (capacity * abs(math.log(error_rate)))
+                / (num_slices * (math.log(2) ** 2))
+            )
+        )
         self._setup(error_rate, num_slices, bits_per_slice, capacity, 0)
         self.bitarray = bitarray.bitarray(self.num_bits, endian='little')
         self.bitarray.setall(False)
@@ -172,16 +177,20 @@ class BloomFilter(object):
         return self.count
 
     def nstar(self):
-        #from http://en.wikipedia.org/wiki/Bloom_filter (The union and intersection of sets)
-        return -self.num_bits*math.log(1-float(self.bitarray.count(True))/float(self.num_bits))/self.num_slices
+        # from http://en.wikipedia.org/wiki/Bloom_filter (The union and intersection of sets)
+        return (
+            -self.num_bits
+            * math.log(1 - float(self.bitarray.count(True)) / float(self.num_bits))
+            / self.num_slices
+        )
 
-    def nstar_intersection(self,bloom):
-        #from http://en.wikipedia.org/wiki/Bloom_filter (The union and intersection of sets)
+    def nstar_intersection(self, bloom):
+        # from http://en.wikipedia.org/wiki/Bloom_filter (The union and intersection of sets)
         new_bloom = self.union(bloom)
-        return self.nstar()+bloom.nstar()-new_bloom.nstar()
+        return self.nstar() + bloom.nstar() - new_bloom.nstar()
 
     def add(self, key, skip_check=False):
-        """ Adds a key to this bloom filter. If the key already exists in this
+        """Adds a key to this bloom filter. If the key already exists in this
         filter it will return True. Otherwise False.
 
         >>> b = BloomFilter(capacity=100)
@@ -216,19 +225,19 @@ class BloomFilter(object):
             return True
 
     def copy(self):
-        """Return a copy of this bloom filter.
-        """
+        """Return a copy of this bloom filter."""
         new_filter = BloomFilter(self.capacity, self.error_rate)
         new_filter.bitarray = self.bitarray.copy()
         return new_filter
 
     def union(self, other):
-        """ Calculates the union of the two underlying bitarrays and returns
+        """Calculates the union of the two underlying bitarrays and returns
         a new bloom filter object."""
-        if self.capacity != other.capacity or \
-            self.error_rate != other.error_rate:
-            raise ValueError("Unioning filters requires both filters to have \
-both the same capacity and error rate")
+        if self.capacity != other.capacity or self.error_rate != other.error_rate:
+            raise ValueError(
+                "Unioning filters requires both filters to have \
+both the same capacity and error rate"
+            )
         new_bloom = self.copy()
         new_bloom.bitarray = new_bloom.bitarray | other.bitarray
         return new_bloom
@@ -237,12 +246,13 @@ both the same capacity and error rate")
         return self.union(other)
 
     def intersection(self, other):
-        """ Calculates the intersection of the two underlying bitarrays and returns
+        """Calculates the intersection of the two underlying bitarrays and returns
         a new bloom filter object."""
-        if self.capacity != other.capacity or \
-            self.error_rate != other.error_rate:
-            raise ValueError("Intersecting filters requires both filters to \
-have equal capacity and error rate")
+        if self.capacity != other.capacity or self.error_rate != other.error_rate:
+            raise ValueError(
+                "Intersecting filters requires both filters to \
+have equal capacity and error rate"
+            )
         new_bloom = self.copy()
         new_bloom.bitarray = new_bloom.bitarray & other.bitarray
         return new_bloom
@@ -254,10 +264,21 @@ have equal capacity and error rate")
         """Write the bloom filter to file object `f'. Underlying bits
         are written as machine values. This is much more space
         efficient than pickling the object."""
-        f.write(pack(self.FILE_FMT, self.error_rate, self.num_slices,
-                     self.bits_per_slice, self.capacity, self.count))
-        (f.write(self.bitarray.tobytes()) if is_string_io(f)
-         else self.bitarray.tofile(f))
+        f.write(
+            pack(
+                self.FILE_FMT,
+                self.error_rate,
+                self.num_slices,
+                self.bits_per_slice,
+                self.capacity,
+                self.count,
+            )
+        )
+        (
+            f.write(self.bitarray.tobytes())
+            if is_string_io(f)
+            else self.bitarray.tofile(f)
+        )
 
     @classmethod
     def fromfile(cls, f, n=-1):
@@ -272,14 +293,20 @@ have equal capacity and error rate")
         filter._setup(*unpack(cls.FILE_FMT, f.read(headerlen)))
         filter.bitarray = bitarray.bitarray(endian='little')
         if n > 0:
-            (filter.bitarray.frombytes(f.read(n-headerlen)) if is_string_io(f)
-             else filter.bitarray.fromfile(f, n - headerlen))
+            (
+                filter.bitarray.frombytes(f.read(n - headerlen))
+                if is_string_io(f)
+                else filter.bitarray.fromfile(f, n - headerlen)
+            )
         else:
-            (filter.bitarray.frombytes(f.read()) if is_string_io(f)
-             else filter.bitarray.fromfile(f))
-        if filter.num_bits != len(filter.bitarray) and \
-               (filter.num_bits + (8 - filter.num_bits % 8)
-                != len(filter.bitarray)):
+            (
+                filter.bitarray.frombytes(f.read())
+                if is_string_io(f)
+                else filter.bitarray.fromfile(f)
+            )
+        if filter.num_bits != len(filter.bitarray) and (
+            filter.num_bits + (8 - filter.num_bits % 8) != len(filter.bitarray)
+        ):
             raise ValueError('Bit length mismatch!')
         return filter
 
@@ -292,13 +319,13 @@ have equal capacity and error rate")
         self.__dict__.update(d)
         self.make_hashes = make_hashfuncs(self.num_slices, self.bits_per_slice)
 
+
 class ScalableBloomFilter(object):
-    SMALL_SET_GROWTH = 2 # slower, but takes up less memory
-    LARGE_SET_GROWTH = 4 # faster, but takes up more memory faster
+    SMALL_SET_GROWTH = 2  # slower, but takes up less memory
+    LARGE_SET_GROWTH = 4  # faster, but takes up more memory faster
     FILE_FMT = '<idQd'
 
-    def __init__(self, initial_capacity=100, error_rate=0.001,
-                 mode=SMALL_SET_GROWTH):
+    def __init__(self, initial_capacity=100, error_rate=0.001, mode=SMALL_SET_GROWTH):
         """Implements a space-efficient probabilistic data structure that
         grows as more items are added while maintaining a steady false
         positive rate
@@ -372,36 +399,43 @@ class ScalableBloomFilter(object):
         if not self.filters:
             filter = BloomFilter(
                 capacity=self.initial_capacity,
-                error_rate=self.error_rate * (1.0 - self.ratio))
+                error_rate=self.error_rate * (1.0 - self.ratio),
+            )
             self.filters.append(filter)
         else:
             filter = self.filters[-1]
             if filter.count >= filter.capacity:
                 filter = BloomFilter(
                     capacity=filter.capacity * self.scale,
-                    error_rate=filter.error_rate * self.ratio)
+                    error_rate=filter.error_rate * self.ratio,
+                )
                 self.filters.append(filter)
         filter.add(key, skip_check=True)
         return False
 
     def copy(self):
-        """Return a copy of this scalable bloom filter.
-        """
-        new_filter = ScalableBloomFilter(initial_capacity=self.initial_capacity,
-                                         error_rate=self.error_rate,
-                                         mode=self.SMALL_SET_GROWTH)
+        """Return a copy of this scalable bloom filter."""
+        new_filter = ScalableBloomFilter(
+            initial_capacity=self.initial_capacity,
+            error_rate=self.error_rate,
+            mode=self.SMALL_SET_GROWTH,
+        )
         new_filter.filters = self.filters[:]
         return new_filter
 
     def union(self, other):
-        """ Calculates the union of the underlying classic bloom filters and returns
+        """Calculates the union of the underlying classic bloom filters and returns
         a new scalable bloom filter object."""
 
-        if self.scale != other.scale or \
-                self.initial_capacity != other.initial_capacity or \
-                self.error_rate != other.error_rate:
-            raise ValueError("Unioning two scalable bloom filters requires \
-            both filters to have both the same mode, initial capacity and error rate")
+        if (
+            self.scale != other.scale
+            or self.initial_capacity != other.initial_capacity
+            or self.error_rate != other.error_rate
+        ):
+            raise ValueError(
+                "Unioning two scalable bloom filters requires \
+            both filters to have both the same mode, initial capacity and error rate"
+            )
         if len(self.filters) > len(other.filters):
             larger_sbf = self.copy()
             smaller_sbf = other.copy()
@@ -433,8 +467,15 @@ class ScalableBloomFilter(object):
     def tofile(self, f):
         """Serialize this ScalableBloomFilter into the file-object
         `f'."""
-        f.write(pack(self.FILE_FMT, self.scale, self.ratio,
-                     self.initial_capacity, self.error_rate))
+        f.write(
+            pack(
+                self.FILE_FMT,
+                self.scale,
+                self.ratio,
+                self.initial_capacity,
+                self.error_rate,
+            )
+        )
 
         # Write #-of-filters
         f.write(pack(b'<l', len(self.filters)))
@@ -443,7 +484,7 @@ class ScalableBloomFilter(object):
             # Then each filter directly, with a header describing
             # their lengths.
             headerpos = f.tell()
-            headerfmt = b'<' + b'Q'*(len(self.filters))
+            headerfmt = b'<' + b'Q' * (len(self.filters))
             f.write(b'.' * calcsize(headerfmt))
             filter_sizes = []
             for filter in self.filters:
@@ -459,9 +500,9 @@ class ScalableBloomFilter(object):
         """Deserialize the ScalableBloomFilter in file object `f'."""
         filter = cls()
         filter._setup(*unpack(cls.FILE_FMT, f.read(calcsize(cls.FILE_FMT))))
-        nfilters, = unpack(b'<l', f.read(calcsize(b'<l')))
+        (nfilters,) = unpack(b'<l', f.read(calcsize(b'<l')))
         if nfilters > 0:
-            header_fmt = b'<' + b'Q'*nfilters
+            header_fmt = b'<' + b'Q' * nfilters
             bytes = f.read(calcsize(header_fmt))
             filter_lengths = unpack(header_fmt, bytes)
             for fl in filter_lengths:
@@ -478,4 +519,5 @@ class ScalableBloomFilter(object):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
