@@ -77,16 +77,10 @@ def make_hashfuncs(num_slices, num_bits):
     salts = tuple(hashfn(hashfn(pack('I', i)).digest()) for i in range_fn(num_salts))
 
     def _make_hashfuncs(key):
-        if running_python_3:
-            if isinstance(key, str):
-                key = key.encode('utf-8')
-            else:
-                key = str(key).encode('utf-8')
+        if isinstance(key, str):
+            key = key.encode('utf-8')
         else:
-            if isinstance(key, unicode):
-                key = key.encode('utf-8')
-            else:
-                key = str(key)
+            key = str(key).encode('utf-8')
         i = 0
         for salt in salts:
             h = salt.copy()
