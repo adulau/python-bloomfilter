@@ -1,1 +1,1 @@
-bitarray>=0.3.4
+bitarray>1.5.1
