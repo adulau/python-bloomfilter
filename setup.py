@@ -31,7 +31,7 @@ setup(
               'probabilistic', 'set'),
     author="Jay Baird",
     author_email="jay.baird@me.com",
-    url="http://github.com/jaybaird/python-bloomfilter/",
+    url="http://github.com/adulau/python-bloomfilter/",
     license="MIT License",
     platforms=['any'],
     test_suite="pybloom.tests",
