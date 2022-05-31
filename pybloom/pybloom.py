@@ -270,7 +270,7 @@ have equal capacity and error rate")
              else filter.bitarray.fromfile(f))
         if filter.num_bits != len(filter.bitarray) and \
                (filter.num_bits + (8 - filter.num_bits % 8)
-                != len(filter.bitarray):
+                != len(filter.bitarray)):
             raise ValueError('Bit length mismatch!')
         return filter
 
