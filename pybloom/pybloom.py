@@ -268,7 +268,7 @@ have equal capacity and error rate")
         else:
             (filter.bitarray.frombytes(f.read()) if is_string_io(f)
              else filter.bitarray.fromfile(f))
-        if filter.num_bits != len(filter.bitarray.length() and \
+        if filter.num_bits != len(filter.bitarray) and \
                (filter.num_bits + (8 - filter.num_bits % 8)
                 != len(filter.bitarray):
             raise ValueError('Bit length mismatch!')
