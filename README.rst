@@ -1,11 +1,13 @@
 pybloom
 =======
 
+This fork includes various fixes and enhancement available in various places.
+
 .. image:: https://travis-ci.org/jaybaird/python-bloomfilter.svg?branch=master
     :target: https://travis-ci.org/jaybaird/python-bloomfilter
 
 ``pybloom`` is a module that includes a Bloom Filter data structure along with
-an implmentation of Scalable Bloom Filters as discussed in:
+an implementation of Scalable Bloom Filters as discussed in:
 
 P. Almeida, C.Baquero, N. Preguiça, D. Hutchison, Scalable Bloom Filters,
 (GLOBECOM 2007), IEEE, 2007.
