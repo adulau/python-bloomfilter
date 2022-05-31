@@ -310,6 +310,36 @@ have equal capacity and error rate"
             raise ValueError('Bit length mismatch!')
         return filter
 
+    def toBytes(self):
+        filter = bytearray()
+        filter.extend(
+            pack(
+                self.FILE_FMT,
+                self.error_rate,
+                self.num_slices,
+                self.bits_per_slice,
+                self.capacity,
+                self.count,
+            )
+        )
+        filter.extend(self.bitarray.tobytes())
+        return bytes(filter)
+
+    @classmethod
+    def fromBytes(cls, bytes):
+        headerlen = calcsize(cls.FILE_FMT)
+        filter = cls(1)
+        filter._setup(*unpack(cls.FILE_FMT, bytes[:headerlen]))
+        filter.bitarray = bitarray.bitarray(endian='little')
+        filter.bitarray.frombytes(bytes[headerlen:])
+
+        if filter.num_bits != len(filter.bitarray) and (
+            filter.num_bits + (8 - filter.num_bits % 8) != len(filter.bitarray)
+        ):
+            raise ValueError('Bit length mismatch!')
+
+        return filter
+
     def __getstate__(self):
         d = self.__dict__.copy()
         del d['make_hashes']
