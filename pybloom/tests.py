@@ -1,6 +1,5 @@
 from __future__ import absolute_import
-from pybloom.pybloom import BloomFilter, ScalableBloomFilter
-from pybloom.utils import running_python_3, range_fn
+from pybloom import BloomFilter, ScalableBloomFilter
 
 try:
     from StringIO import StringIO
@@ -26,7 +25,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_union(self):
         bloom_one = BloomFilter(100, 0.001)
         bloom_two = BloomFilter(100, 0.001)
-        chars = [chr(i) for i in range_fn(97, 123)]
+        chars = [chr(i) for i in range(97, 123)]
         for char in chars[int(len(chars)/2):]:
             bloom_one.add(char)
         for char in chars[:int(len(chars)/2)]:
@@ -38,7 +37,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_intersection(self):
         bloom_one = BloomFilter(100, 0.001)
         bloom_two = BloomFilter(100, 0.001)
-        chars = [chr(i) for i in range_fn(97, 123)]
+        chars = [chr(i) for i in range(97, 123)]
         for char in chars:
             bloom_one.add(char)
         for char in chars[:int(len(chars)/2)]:
@@ -51,7 +50,7 @@ class TestUnionIntersection(unittest.TestCase):
 
     def test_nstar(self):
         bloom = BloomFilter(1000, 0.001)
-        chars = [chr(i) for i in range_fn(0,200)]
+        chars = [chr(i) for i in range(0,200)]
         for char in chars:
             bloom.add(char)
         self.assertTrue(bloom.nstar() > len(chars)-10 and bloom.nstar() < len(chars)+10)
@@ -59,7 +58,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_nstar_intersection_1(self):
         bloom_one = BloomFilter(200, 0.001)
         bloom_two = BloomFilter(200, 0.001)
-        chars = [chr(i) for i in range_fn(0, 200)]
+        chars = [chr(i) for i in range(0, 200)]
         for char in chars:
             bloom_one.add(char)
         for char in chars[:int(len(chars)/2)]:
@@ -73,7 +72,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_nstar_intersection_2(self):
         bloom_one = BloomFilter(200, 0.001)
         bloom_two = BloomFilter(200, 0.001)
-        chars = [chr(i) for i in range_fn(0, 200)]
+        chars = [chr(i) for i in range(0, 200)]
         for char in chars[int(len(chars)/2):]:
             bloom_one.add(char)
         for char in chars[:int(len(chars)/2)]:
@@ -91,7 +90,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_nstar_union(self):
         bloom_one = BloomFilter(200, 0.001)
         bloom_two = BloomFilter(200, 0.001)
-        chars = [chr(i) for i in range_fn(0, 200)]
+        chars = [chr(i) for i in range(0, 200)]
         for char in chars[:int(len(chars)/2)]:
             bloom_one.add(char)
         for char in chars[int(len(chars)/2):]:
@@ -134,7 +133,7 @@ class TestUnionIntersection(unittest.TestCase):
     def test_union_scalable_bloom_filter(self):
         bloom_one = ScalableBloomFilter(mode=ScalableBloomFilter.SMALL_SET_GROWTH)
         bloom_two = ScalableBloomFilter(mode=ScalableBloomFilter.SMALL_SET_GROWTH)
-        chars = [chr(i) for i in range_fn(97, 123)]
+        chars = [chr(i) for i in range(97, 123)]
         for char in chars[int(len(chars) / 2):]:
             bloom_one.add(char)
         for char in chars[:int(len(chars) / 2)]:
@@ -145,7 +144,7 @@ class TestUnionIntersection(unittest.TestCase):
 
 class Serialization(unittest.TestCase):
     SIZE = 12345
-    EXPECTED = set([random.randint(0, 10000100) for _ in range_fn(SIZE)])
+    EXPECTED = set([random.randint(0, 10000100) for _ in range(SIZE)])
 
     def test_serialization(self):
         for klass, args in [(BloomFilter, (self.SIZE,)),
@@ -159,10 +158,6 @@ class Serialization(unittest.TestCase):
             stringio = StringIO()
             filter.tofile(stringio)
             streams_to_test = [f, stringio]
-            if not running_python_3:
-                cstringio = cStringIO.StringIO()
-                filter.tofile(cstringio)
-                streams_to_test.append(cstringio)
 
             del filter
 
