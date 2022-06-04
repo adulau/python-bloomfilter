@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-VERSION = '2.0.0'
+VERSION = '2.1.0'
 DESCRIPTION = "PyBloom: A Probabilistic data structure"
 LONG_DESCRIPTION = """
 pybloom is a Python implementation of the bloom filter probabilistic data
