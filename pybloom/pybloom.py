@@ -45,11 +45,13 @@ try:
 except ImportError:
     raise ImportError('pybloom requires bitarray >= 0.3.4')
 
-__version__ = '2.0'
+__version__ = '2.1'
 __author__ = "Jay Baird <jay.baird@me.com>, Bob Ippolito <bob@redivi.com>,\
                Marius Eriksen <marius@monkey.org>,\
                Alex Brasetvik <alex@brasetvik.com>,\
                Matt Bachmann <bachmann.matt@gmail.com>,\
+               Andreas Dewes,\
+               Alexandre Dulaunoy <a@foo.be>,\
               "
 
 
