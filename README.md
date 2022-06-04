@@ -1,10 +1,8 @@
-pybloom
-=======
+# pybloom
+
+[![Python package](https://github.com/adulau/python-bloomfilter/actions/workflows/pythonpackage.yml/badge.svg)](https://github.com/adulau/python-bloomfilter/actions/workflows/pythonpackage.yml)
 
 This fork includes various fixes and enhancement available in various places.
-
-.. image:: https://travis-ci.org/jaybaird/python-bloomfilter.svg?branch=master
-    :target: https://travis-ci.org/jaybaird/python-bloomfilter
 
 ``pybloom`` is a module that includes a Bloom Filter data structure along with
 an implementation of Scalable Bloom Filters as discussed in:
@@ -22,8 +20,16 @@ is reached a new filter is then created exponentially larger than the last
 with a tighter probability of false positives and a larger number of hash
 functions.
 
-.. code-block:: python
+## Installation
 
+~~~~
+pip3 install -r requirements.txt
+pip3 install .
+~~~~
+
+## Usage
+
+~~~~python
     >>> from pybloom import BloomFilter
     >>> f = BloomFilter(capacity=1000, error_rate=0.001)
     >>> [f.add(x) for x in range(10)]
@@ -62,3 +68,5 @@ functions.
     # len(sbf) may not equal the entire input length. 0.01% error is well
     # below the default 0.1% error threshold. As the capacity goes up, the
     # error will approach 0.1%.
+
+~~~~
