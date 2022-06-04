@@ -36,7 +36,7 @@ Requires the bitarray library: http://pypi.python.org/pypi/bitarray/
 from __future__ import absolute_import
 import math
 import hashlib
-#from pybloom.utils import range_fn, is_string_io, running_python_3
+
 from struct import unpack, pack, calcsize
 from io import BytesIO
 
@@ -55,6 +55,7 @@ __author__ = "Jay Baird <jay.baird@me.com>, Bob Ippolito <bob@redivi.com>,\
 
 def is_string_io(instance):
     return isinstance(instance, BytesIO)
+
 
 def make_hashfuncs(num_slices, num_bits):
     if num_bits >= (1 << 31):
