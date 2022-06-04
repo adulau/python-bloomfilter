@@ -7,7 +7,7 @@ Requires the bitarray library: http://pypi.python.org/pypi/bitarray/
 
     >>> from pybloom import BloomFilter
     >>> f = BloomFilter(capacity=10000, error_rate=0.001)
-    >>> for i in range_fn(0, f.capacity):
+    >>> for i in range(0, f.capacity):
     ...     _ = f.add(i)
     ...
     >>> 0 in f
@@ -22,7 +22,7 @@ Requires the bitarray library: http://pypi.python.org/pypi/bitarray/
     >>> from pybloom import ScalableBloomFilter
     >>> sbf = ScalableBloomFilter(mode=ScalableBloomFilter.SMALL_SET_GROWTH)
     >>> count = 10000
-    >>> for i in range_fn(0, count):
+    >>> for i in range(0, count):
     ...     _ = sbf.add(i)
     ...
     >>> sbf.capacity > count
@@ -36,8 +36,9 @@ Requires the bitarray library: http://pypi.python.org/pypi/bitarray/
 from __future__ import absolute_import
 import math
 import hashlib
-from pybloom.utils import range_fn, is_string_io, running_python_3
+#from pybloom.utils import range_fn, is_string_io, running_python_3
 from struct import unpack, pack, calcsize
+from io import BytesIO
 
 try:
     import bitarray
@@ -51,6 +52,9 @@ __author__ = "Jay Baird <jay.baird@me.com>, Bob Ippolito <bob@redivi.com>,\
                Matt Bachmann <bachmann.matt@gmail.com>,\
               "
 
+
+def is_string_io(instance):
+    return isinstance(instance, BytesIO)
 
 def make_hashfuncs(num_slices, num_bits):
     if num_bits >= (1 << 31):
@@ -74,7 +78,7 @@ def make_hashfuncs(num_slices, num_bits):
     num_salts, extra = divmod(num_slices, len(fmt))
     if extra:
         num_salts += 1
-    salts = tuple(hashfn(hashfn(pack('I', i)).digest()) for i in range_fn(num_salts))
+    salts = tuple(hashfn(hashfn(pack('I', i)).digest()) for i in range(num_salts))
 
     def _make_hashfuncs(key):
         if isinstance(key, str):
