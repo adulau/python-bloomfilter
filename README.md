@@ -2,13 +2,12 @@
 
 [![Python package](https://github.com/adulau/python-bloomfilter/actions/workflows/pythonpackage.yml/badge.svg)](https://github.com/adulau/python-bloomfilter/actions/workflows/pythonpackage.yml)
 
-This fork includes various fixes and enhancement available in various places.
+This fork of pybloom includes various fixes and enhancement available in various places.
 
 ``pybloom`` is a module that includes a Bloom Filter data structure along with
 an implementation of Scalable Bloom Filters as discussed in:
 
-P. Almeida, C.Baquero, N. Preguiça, D. Hutchison, Scalable Bloom Filters,
-(GLOBECOM 2007), IEEE, 2007.
+- P. Almeida, C.Baquero, N. Preguiça, D. Hutchison, Scalable Bloom Filters, (GLOBECOM 2007), IEEE, 2007. [PDF](https://haslab.uminho.pt/cbm/files/dbloom.pdf)
 
 Bloom filters are great if you understand what amount of bits you need to set
 aside early to store your entire set. Scalable Bloom Filters allow your bloom
@@ -68,5 +67,4 @@ pip3 install .
     # len(sbf) may not equal the entire input length. 0.01% error is well
     # below the default 0.1% error threshold. As the capacity goes up, the
     # error will approach 0.1%.
-
 ~~~~
